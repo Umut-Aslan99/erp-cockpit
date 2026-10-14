@@ -89,3 +89,13 @@ test('supplier drill-down from the chart table to its purchase lines', async ({ 
     expect(supplier).toBe('Sensorik Arndt GmbH');
   }
 });
+
+test('a first visit creates exactly one workspace', async ({ page }) => {
+  // Regression: the dashboard's parallel first requests each created their own workspace.
+  const seen: Promise<string | undefined>[] = [];
+  page.on('response', (r) => seen.push(r.allHeaders().then((h) => h['set-cookie']?.match(/erp_ws=([0-9a-f-]+)/)?.[1])));
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  const ids = new Set((await Promise.all(seen)).filter(Boolean));
+  expect(ids.size).toBe(1);
+});

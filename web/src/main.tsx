@@ -28,10 +28,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  </StrictMode>,
-);
+function render() {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+}
+
+// First visit: get the workspace cookie with ONE request before the pages fire several in parallel –
+// otherwise every cookie-less request would create its own workspace.
+fetch('/api/workspace')
+  .then(async (res) => { if (res.ok) queryClient.setQueryData(['workspace'], await res.json()); })
+  .catch(() => undefined)
+  .finally(render);
