@@ -1,0 +1,50 @@
+# ERP-Cockpit – react.umut-aslan.dev
+#   Browser ──▶ Traefik ──▶ app (ASP.NET Core: API + React build) ──▶ db (PostgreSQL)
+# Only `app` is on the public proxy network; the database is internal.
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: erp
+      POSTGRES_USER: erp
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes: [db:/var/lib/postgresql/data]
+    networks: [internal]
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp -d erp"]
+      interval: 10s
+      start_period: 10s
+      start_interval: 1s
+
+  app:
+    build: .
+    image: umutaslan/erp-cockpit:${GIT_SHA:-local}
+    restart: unless-stopped
+    environment:
+      ConnectionStrings__Db: Host=db;Database=erp;Username=erp;Password=${DB_PASSWORD}
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [internal, proxy]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 384m
+    labels:
+      - traefik.enable=${TRAEFIK_ENABLE:-true}
+      - traefik.docker.network=proxy
+      - traefik.http.routers.erp.rule=Host(`react.umut-aslan.dev`)
+      - traefik.http.routers.erp.entrypoints=websecure
+      - traefik.http.routers.erp.tls.certresolver=myresolver
+      - traefik.http.services.erp.loadbalancer.server.port=8080
+
+volumes:
+  db:
+
+networks:
+  internal:
+    internal: true
+  proxy:
+    external: true
