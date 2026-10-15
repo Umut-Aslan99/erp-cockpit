@@ -54,7 +54,7 @@ export function Import() {
       <PageHead eyebrow="Import" title="ERP-Export einlesen"
         intro="CSV oder Excel aus dem ERP hochladen. Spalten werden automatisch erkannt, jede Zeile wird geprüft – übernommen werden nur gültige Zeilen, und jeder Import lässt sich zurücknehmen." />
 
-      <ol className="steps" aria-label="Fortschritt">
+      <ol className="steps" aria-label="Fortschritt" data-tour="import-steps">
         {STEPS.map(([s, label], i) => (
           <li key={s} aria-current={s === step ? 'step' : undefined} className={i < stepIndex ? 'done' : undefined}>{label}</li>
         ))}
@@ -87,7 +87,7 @@ export function Import() {
             </div>
           </section>
 
-          <section aria-labelledby="samples-title">
+          <section aria-labelledby="samples-title" data-tour="samples">
             <h2 id="samples-title" style={{ fontSize: '1.05rem' }}>Keine Datei zur Hand? Beispieldateien aus typischen Quellen</h2>
             <div className="samples">
               {samples.map((s) => (

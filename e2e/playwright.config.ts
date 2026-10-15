@@ -9,6 +9,6 @@ export default defineConfig({
   use: { baseURL: process.env.BASE_URL ?? 'http://localhost:8080', trace: 'retain-on-failure', locale: 'de-DE', timezoneId: 'Europe/Berlin' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /layout\.spec/ },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /(layout|tour)\.spec/ },
   ],
 });

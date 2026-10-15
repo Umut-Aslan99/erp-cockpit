@@ -65,7 +65,7 @@ export function Layout() {
       </header>
 
       <main className="page" id="main">
-        <div className="workspace-note" role="note">
+        <div className="workspace-note" role="note" data-tour="workspace">
           <span><strong>Ihr persönlicher Demo-Arbeitsbereich.</strong> Importe und Änderungen sehen nur Sie; er wird nach {ws.data?.expiresAfterIdleHours ?? 24} Stunden ohne Nutzung gelöscht. Alle Firmen und Daten sind frei erfunden.</span>
           <button className="btn btn-sm btn-ghost" type="button" disabled={reset.isPending}
             onClick={() => { if (confirm('Arbeitsbereich auf die Demo-Daten zurücksetzen? Ihre Importe gehen verloren.')) reset.mutate(); }}>

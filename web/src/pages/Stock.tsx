@@ -31,7 +31,7 @@ export function Stock() {
     <>
       <PageHead eyebrow="Lager" title="Bestand, Umschlag, Ladenhüter"
         intro="Bestand aus allen Lagerbewegungen berechnet. Ladenhüter: Bestand vorhanden, aber seit über 180 Tagen kein Abgang. Zeile anklicken für die Bewegungen des Artikels." />
-      <div className="toolbar">
+      <div className="toolbar" data-tour="stock-filters">
         <SearchInput placeholder="Artikel suchen …" label="Artikel suchen" value={t.filters.q ?? ''} onChange={(v) => t.setFilter('q', v)} />
         <select className="select" aria-label="Warengruppe" value={t.filters.group} onChange={(e) => t.setFilter('group', e.target.value)}>
           <option value="">Alle Warengruppen</option>
@@ -40,7 +40,7 @@ export function Stock() {
         <Segmented label="Ansicht" value={t.filters.view ?? ''} onChange={(v) => t.setFilter('view', v)}
           options={[['', 'Alle'], ['stock', 'Mit Bestand'], ['slow', 'Ladenhüter']]} />
         <span className="grow" />
-        <a className="btn btn-sm" href={t.exportHref}><Icon name="download" />Excel</a>
+        <a className="btn btn-sm" href={t.exportHref} data-tour="excel-export"><Icon name="download" />Excel</a>
       </div>
       <DataTable columns={columns} {...t.table} onRowClick={(r) => navigate(`/lager/${encodeURIComponent(r.number)}`)} />
     </>
