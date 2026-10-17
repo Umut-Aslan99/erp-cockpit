@@ -15,6 +15,9 @@ backend_tests() {   # xUnit: core + API against a throw-away PostgreSQL, in Berl
 }
 
 e2e_tests() {       # Playwright against the full stack, isolated from production (web unit tests run in the image build)
+  # The compose file joins Traefik's external network: it exists on the server; elsewhere (CI, a fresh clone) an
+  # empty one stands in, so the stack can start (Traefik itself is off here).
+  docker network inspect proxy >/dev/null 2>&1 || docker network create proxy >/dev/null
   TRAEFIK_ENABLE=false docker compose -p erp-ci up -d --build --wait
   trap 'docker compose -p erp-ci down -v >/dev/null 2>&1 || true' RETURN
   local app; app=$(docker compose -p erp-ci ps -q app)
